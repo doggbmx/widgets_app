@@ -11,7 +11,7 @@ class HomeScreen extends StatelessWidget {
         centerTitle: false,
         title: const Text('Flutter + Material 3'),
       ),
-      body: _HomeScreen(),
+      body: const _HomeScreen(),
     );
   }
 }
@@ -48,7 +48,12 @@ class _CustomListTile extends StatelessWidget {
       title: Text(menuItem.title),
       subtitle: Text(menuItem.subTitle),
       onTap: () => {
-        // TODO: NAVEGAR A OTRA PANTALLA
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //     builder: (context) => const ButtonsScreen(),
+        //   ),
+        // )
+        Navigator.pushNamed(context, menuItem.link)
       },
     );
   }
