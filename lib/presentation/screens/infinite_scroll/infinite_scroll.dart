@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -28,7 +29,6 @@ class _InifiniteScrollScreenState extends State<InifiniteScrollScreen> {
     await Future.delayed(const Duration(seconds: 2));
     addFiveImages();
     isLoading = false;
-    // TODO: CHECK IF MOUNTED
     if (!isMounted) return;
     setState(() {});
   }
@@ -73,8 +73,15 @@ class _InifiniteScrollScreenState extends State<InifiniteScrollScreen> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: isLoading ? () {} : () => context.pop(),
+          child: isLoading
+              ? SpinPerfect(
+                  infinite: true,
+                  child: const Icon(
+                    Icons.refresh_outlined,
+                  ),
+                )
+              : FadeIn(child: const Icon(Icons.arrow_back)),
         ));
   }
 }
