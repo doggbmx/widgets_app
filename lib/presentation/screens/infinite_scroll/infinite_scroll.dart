@@ -17,6 +17,32 @@ class _InifiniteScrollScreenState extends State<InifiniteScrollScreen> {
 
   final ScrollController scrollController = ScrollController();
 
+  Future<void> onRefresh() async {
+    await Future.delayed(const Duration(seconds: 3));
+    isLoading = true;
+    setState(() {});
+    if (!isMounted) return;
+
+    final lastId = imgIds.last;
+    imgIds.clear();
+    imgIds.add(lastId + 1);
+    addFiveImages();
+
+    isLoading = false;
+    setState(() {});
+  }
+
+  void moveScrollToBottom() {
+    if (scrollController.position.pixels + 150 <=
+        scrollController.position.maxScrollExtent) return;
+
+    scrollController.animateTo(
+      scrollController.position.pixels + 120,
+      duration: const Duration(microseconds: 300),
+      curve: Curves.fastOutSlowIn,
+    );
+  }
+
   void addFiveImages() {
     final lastId = imgIds.last;
     imgIds.addAll([1, 2, 3, 4, 5].map((e) => lastId + e));
@@ -31,6 +57,7 @@ class _InifiniteScrollScreenState extends State<InifiniteScrollScreen> {
     isLoading = false;
     if (!isMounted) return;
     setState(() {});
+    moveScrollToBottom();
   }
 
   @override
@@ -59,17 +86,23 @@ class _InifiniteScrollScreenState extends State<InifiniteScrollScreen> {
           context: context,
           removeTop: true,
           removeBottom: true,
-          child: ListView.builder(
-            controller: scrollController,
-            itemCount: imgIds.length,
-            itemBuilder: (context, index) {
-              return FadeInImage(
-                fit: BoxFit.cover,
-                placeholder: const AssetImage('assets/images/jar-loading.gif'),
-                image: NetworkImage(
-                    'https://picsum.photos/id/${imgIds[index]}/500/300'),
-              );
-            },
+          child: RefreshIndicator(
+            edgeOffset: 10,
+            strokeWidth: 2,
+            onRefresh: onRefresh,
+            child: ListView.builder(
+              controller: scrollController,
+              itemCount: imgIds.length,
+              itemBuilder: (context, index) {
+                return FadeInImage(
+                  fit: BoxFit.cover,
+                  placeholder:
+                      const AssetImage('assets/images/jar-loading.gif'),
+                  image: NetworkImage(
+                      'https://picsum.photos/id/${imgIds[index]}/500/300'),
+                );
+              },
+            ),
           ),
         ),
         floatingActionButton: FloatingActionButton(
